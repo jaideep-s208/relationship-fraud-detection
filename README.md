@@ -25,11 +25,15 @@ Neo4j Graph Database (Docker)
 2.	Install Docker https://www.docker.com/products/docker-desktop/
 Works for: Windows, Mac, Linux
 3.	Open PowerShell/CMD for windows or Terminal for MAC
-Navigate to project folder using command- ```bash
+Navigate to project folder using command-
+```bash
 cd path/to/project
 ```
-5.	Create Docker Network- docker network create relationship-network
-6.	Start Neo4j container using command-
+5.	Create Docker Network
+    ```bash
+   docker network create relationship-network
+   ```
+6.	Start Neo4j container using command
 ```bash
 docker run -d --name neo4j \
 --network relationship-network \
@@ -54,7 +58,7 @@ Now Build Docker Image
 docker build -t relationshipsystem-app .
 ```
 8.	Start Application Container using command
-9.	```bash
+```bash
 docker run -d --name relationship-app \
 --network relationship-network \
 -p 8080:8080 \
@@ -65,7 +69,7 @@ relationshipsystem-app
 ```
 Access UI using- http://localhost:8080
 Now the System is almost ready to use. Just few Steps for data generation.
-10.	Generate and clean old Data
+9.	Generate and clean old Data
 In a new Tab in the same browser where UI is already accessed, use mentioned http for different data generation and cleaning actions.
 http://localhost:8080/api/data/reset - to delete all data.
 http://localhost:8080/api/data/generate-demo - generate demo data which contains 
