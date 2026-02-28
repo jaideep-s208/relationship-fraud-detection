@@ -46,14 +46,14 @@ Access Neo4j UI- http://localhost:7474
 
 6.	Build spring Boot App
 First Build JAR using command:
+for Windows
 ```bash
 .\mvnw clean package -DskipTests
 ```
- for windows
+for MAC/Linux
 ```bash
 ./mvnw clean package -DskipTests
 ```
-for MAC/Linux
 Now Build Docker Image
 ```bash
 docker build -t relationshipsystem-app .
@@ -69,7 +69,9 @@ docker run -d --name relationship-app \
 relationshipsystem-app
 ```
 Access UI using- http://localhost:8080
+
 Now the System is almost ready to use. Just few Steps for data generation.
+
 9.	Generate and clean old Data
 In a new Tab in the same browser where UI is already accessed, use mentioned http for different data generation and cleaning actions.
 http://localhost:8080/api/data/reset - to delete all data.
