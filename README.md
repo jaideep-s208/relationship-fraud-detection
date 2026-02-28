@@ -40,9 +40,8 @@ neo4j:5.20
 ```
 Access Neo4j UI- http://localhost:7474
 
-UserId-Neo4j
-
-Password-password
+- UserId-Neo4j
+- Password-password
 
 6.	Build spring Boot App
    
