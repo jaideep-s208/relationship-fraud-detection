@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Relationship Transaction Investigation Dashboard</title>
+
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+    <style>
+
+        body{
+            font-family:"Segoe UI",Arial;
+            margin:0;
+                background:#eef2f7;
+        }
+
+        h2{
+            text-align:center;
+            margin:15px 0;
+        }
+
+        /* ===== CONTROL PANEL ===== */
+
+        #controls{
+            background:white;
+            padding:12px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.08);
+            border-bottom:1px solid #ddd;
+        }
+
+        .control-row{
+            display:flex;
+            flex-wrap:wrap;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+            margin:8px 0;
+        }
+
+        #controls input,
+        #controls select{
+            height:34px;
+            padding:0 10px;
+            border-radius:6px;
+            border:1px solid #ccc;
+            min-width:130px;
+        }
+
+        #controls button{
+            height:34px;
+            padding:0 14px;
+            border-radius:6px;
+            background:#1976d2;
+            color:white;
+            border:none;
+            font-weight:500;
+            transition:0.2s;
+        }
+
+        #controls button:hover{
+            background:#125ea7;
+            transform:translateY(-1px);
+        }
+
+        #controls label{
+            font-weight:600;
+            color:#444;
+        }
+
+        #sidebar{
+            width:270px;
+            height:90vh;
+            float:left;
+            background:white;
+            border-right:1px solid #ddd;
+            padding:12px;
+            overflow-y:auto;
+        }
+
+        #network{
+            width:calc(100% - 620px);
+            height:90vh;
+            float:left;
+            background:white;
+        }
+
+        #infoPanel{
+            width:250px;
+            height:86vh;
+            float:right;
+            background:white;
+            padding:15px;
+            box-shadow:-2px 0 8px rgba(0,0,0,0.1);
+            overflow-y:auto;
+        }
+
+        .listItem{
+            padding:6px;
+            margin:4px 0;
+            background:#f1f3f6;
+            border-radius:6px;
+            cursor:pointer;
+        }
+
+        .listItem:hover{
+            background:#e3f2fd;
+        }
+
+        .statBox{
+            padding:8px;
+            margin:6px 0;
+            border-radius:6px;
+            color:white;
+        }
+
+        .statUsers{background:#4CAF50;}
+        .statTx{background:#ff9800;}
+        .statSuspicious{background:#e53935;}
+
+    </style>
+</head>
+
+<body>
+
+<h2>User and Transactions Relationship Visualization System</h2>
+
+<div id="controls">
+
+    <!-- GRAPH ACTIONS -->
+    <div class="control-row">
+        <input id="userA" placeholder="User A">
+        <input id="userB" placeholder="User B">
+        <button onclick="findShortestPath()">Shortest Path</button>
+
+        <button onclick="exportGraphJSON()">Export JSON</button>
+        <button onclick="loadGraph()">Load Graph</button>
+
+        <select id="depthSelect">
+            <option value="1">Depth 1</option>
+            <option value="2" selected>Depth 2</option>
+            <option value="3">Depth 3</option>
+        </select>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="control-row">
+        <label>Min User Transactions</label>
+        <input type="number" id="minTxCount" value="1">
+        <button onclick="filterUsersByTxCount()">Filter Users</button>
+
+        <label>Min Amount</label>
+        <input type="number" id="minAmount" value="0">
+        <button onclick="filterTransactionsByAmount()">Filter Transactions</button>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="control-row">
+        <button onclick="openUsers()">Show All Users</button>
+        <button onclick="openTransactions()">Show All Transactions</button>
+
+        <input id="userSearchBox" placeholder="Search User (U1)">
+        <button onclick="searchUser()">Search User</button>
+
+        <input id="txSearchBox" placeholder="Search Transaction (T1)">
+        <button onclick="searchTransaction()">Search Transaction</button>
+    </div>
+
+</div>
+
+<div id="sidebar">
+    <div class="legend">
+        <b>Node Color Guide</b>
+
+        <span style="color:#4CAF50;">⬤ User Node</span>
+        <span style="color:#ff9800;">⬤ Transaction Node</span>
+        <span style="color:#e53935;">⬤ Suspicious User</span>
+
+        <hr/>
+        <b>Edge Color Guide</b>
+        <span style="color:#1976d2;">━ SENT_TO</span>
+        <span style="color:#ff9800;">━ PARTICIPATED_IN</span>
+        <span style="color:#009688;">━ SHARED_IP</span>
+        <span style="color:#9c27b0;">━ SHARED_DEVICE</span>
+        <span style="color:#FFD600;">━ LINKED_TO</span>
+    </div>
+    <hr/>
+</div>
+
+<div id="network"></div>
+
+<div id="infoPanel">
+    <h3>Dashboard Stats</h3>
+
+    <div id="totalUsers" class="statBox statUsers">Users: 0</div>
+    <div id="totalTx" class="statBox statTx">Transactions: 0</div>
+    <div id="totalSuspicious" class="statBox statSuspicious">Suspicious: 0</div>
+    <div id="totalSuspiciousTx" class="statBox statSuspicious">
+        Suspicious Transactions: 0
+    </div>
+    <hr/>
+    <h3>Node Details</h3>
+    <div id="details">Click node to inspect</div>
+
+</div>
+
+<script>
+
+    let network;
+    let allNodes;
+    let allEdges;
+    let suspiciousIds=new Set();
+    //==============SHORTEST PATH==============
+    async function findShortestPath(){
+
+        const u1=document.getElementById("userA").value;
+        const u2=document.getElementById("userB").value;
+
+        const graph = await fetch(
+            `/api/relationships/shortest/${u1}/${u2}`
+        ).then(r=>r.json());
+
+        renderGraph(graph);
+        network.on("click", params => {
+            if (!params.nodes.length) return;
+            const node = allNodes.get(params.nodes[0]);
+
+            let html = `<b>ID:</b> ${node.id}<br>
+<b>Type:</b> ${node.nodeType}<hr/>`;
+
+            Object.entries(node.properties || {})
+                .forEach(([k, v]) => {
+                    html += `<b>${k}</b>: ${v}<br>`;
+                });
+
+            document.getElementById("details").innerHTML = html;
+        });
+    }
+    //===================JSON EXPORT==============
+    function exportGraphJSON(){
+
+        const data = {
+            nodes: allNodes.get(),
+            edges: allEdges.get()
+        };
+
+        const blob = new Blob(
+            [JSON.stringify(data, null, 2)],
+            { type: "application/json" }
+        );
+
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "graph-data.json";
+        a.click();
+
+        URL.revokeObjectURL(url);
+    }
+    // ================= LOAD LISTS =================
+
+    async function loadLists(){
+
+        const users=await fetch("/users").then(r=>r.json());
+        const txs=await fetch("/transactions").then(r=>r.json());
+
+        document.getElementById("totalUsers").innerText="Users: "+users.length;
+        document.getElementById("totalTx").innerText="Transactions: "+txs.length;
+
+
+    }
+
+    // ================= LOAD GRAPH =================
+
+    async function loadGraph(userId="U1") {
+
+        const depth = document.getElementById("depthSelect").value;
+
+        const graph = await fetch(
+            `/api/relationships/user/${userId}/depth/${depth}`
+        ).then(r => r.json());
+
+        renderGraph(graph);
+
+        network = new vis.Network(
+            document.getElementById("network"),
+            {nodes: allNodes, edges: allEdges},
+            {physics:{
+                    solver:"forceAtlas2Based",
+                    forceAtlas2Based:{
+                        gravitationalConstant:-80,
+                        centralGravity:0.01,
+                        springLength:160,
+                        springConstant:0.08
+                    },
+                    stabilization:{iterations:150}
+                }}
+        );
+
+        network.fit();
+
+        network.on("click", params => {
+            if (!params.nodes.length) return;
+            const node = allNodes.get(params.nodes[0]);
+
+            let html = `<b>ID:</b> ${node.id}<br>
+<b>Type:</b> ${node.nodeType}<hr/>`;
+
+            Object.entries(node.properties || {})
+                .forEach(([k, v]) => {
+                    html += `<b>${k}</b>: ${v}<br>`;
+                });
+
+            document.getElementById("details").innerHTML = html;
+        });
+
+// load suspicious
+        const suspicious = await fetch(
+            `/api/relationships/suspicious/${userId}`
+        ).then(r => r.json());
+
+        let suspiciousUserCount = 0;
+        let suspiciousTxCount = 0;
+
+        suspicious.nodes.forEach(n => {
+            if (n.label === "User") suspiciousUserCount++;
+            if (n.label === "Transaction") suspiciousTxCount++;
+        });
+
+        document.getElementById("totalSuspicious").innerText =
+            "Suspicious Users: " + suspiciousUserCount;
+
+        document.getElementById("totalSuspiciousTx").innerText =
+            "Suspicious Transactions: " + suspiciousTxCount;
+    }
+
+    // ================= FILTER LOGIC =================
+
+    function filterGraphById(id){
+        const allowed=new Set([id]);
+
+        allEdges.forEach(e=>{
+            if(e.from===id)allowed.add(e.to);
+            if(e.to===id)allowed.add(e.from);
+        });
+
+        applyAllowedFilter(allowed);
+    }
+
+    function filterUsersByTxCount(){
+
+        const min = parseInt(document.getElementById("minTxCount").value);
+
+        const countMap = {};
+
+        allEdges.forEach(e=>{
+            if(e.label === "PARTICIPATED_IN"){
+                countMap[e.from] = (countMap[e.from] || 0) + 1;
+            }
+        });
+
+        const allowed = new Set();
+
+        allNodes.forEach(n=>{
+            if(n.nodeType === "User" && (countMap[n.id] || 0) >= min){
+                allowed.add(n.id);
+
+                // Also keep their transactions visible
+                allEdges.forEach(e=>{
+                    if(e.from === n.id) allowed.add(e.to);
+                    if(e.to === n.id) allowed.add(e.from);
+                });
+            }
+        });
+
+        applyAllowedFilter(allowed);
+    }
+
+    function filterTransactionsByAmount(){
+
+        const min = parseFloat(document.getElementById("minAmount").value);
+        const allowed = new Set();
+
+        allNodes.forEach(n=>{
+            if(n.nodeType==="Transaction"){
+                const amt = n.properties?.amount || 0;
+                if(amt >= min){
+                    allowed.add(n.id);
+
+                    // also keep connected users
+                    allEdges.forEach(e=>{
+                        if(e.from === n.id) allowed.add(e.to);
+                        if(e.to === n.id) allowed.add(e.from);
+                    });
+                }
+            }
+        });
+
+        applyAllowedFilter(allowed);
+    }
+
+    function showAllUsers(){
+        const allowed=new Set();
+        allNodes.forEach(n=>{
+            if(n.nodeType==="User")allowed.add(n.id);
+        });
+        applyAllowedFilter(allowed);
+    }
+
+    function showAllTransactions(){
+        const allowed=new Set();
+        allNodes.forEach(n=>{
+            if(n.nodeType==="Transaction")allowed.add(n.id);
+        });
+        applyAllowedFilter(allowed);
+    }
+
+    function applyAllowedFilter(allowed){
+
+        const filteredNodes=[];
+        const filteredEdges=[];
+
+        allNodes.forEach(n=>{
+            if(allowed.has(n.id))filteredNodes.push(n);
+        });
+
+        allEdges.forEach(e=>{
+            if(allowed.has(e.from)&&allowed.has(e.to))
+                filteredEdges.push(e);
+        });
+
+        network.setData({
+            nodes:new vis.DataSet(filteredNodes),
+            edges:new vis.DataSet(filteredEdges)
+        });
+
+        network.fit({animation:true});
+    }
+
+
+    function renderGraph(graph){
+
+        allNodes = new vis.DataSet(
+            graph.nodes.map(n => ({
+                id:n.id,
+                label:
+                    n.label === "Transaction"
+                        ? "₹" + n.properties.amount
+                        : n.id,
+                nodeType:n.label,
+                properties:n.properties,
+                shape:"ellipse",
+                size: n.label==="User" ? 30 : 20,
+                color:
+                    n.label==="User"
+                        ?{background:"#4CAF50",border:"#2e7d32"}
+                        :{background:"#ff9800",border:"#e65100"},
+                font:{size:18,color:"#fff"}
+            }))
+        );
+
+        allEdges = new vis.DataSet(
+            graph.links.map(l => ({
+                from: l.source,
+                to: l.target,
+                arrows: l.type==="SENT_TO" ? "to" : "",
+
+                label:
+                    (l.type === "SHARED_DEVICE" || l.type === "SHARED_IP")
+                        ? ""
+                        : l.type,
+
+                smooth: {
+                    type: "dynamic"
+                },
+
+                color:
+                    l.type === "SENT_TO" ? "#1976d2" :
+                        l.type === "PARTICIPATED_IN" ? "#ff9800" :
+                            l.type === "SHARED_DEVICE" ? "#9c27b0" :
+                                l.type === "SHARED_IP" ? "#009688" :
+                                    l.type==="LINKED_TO" ? "#FFD600" :
+                                        "#555",
+
+                width:
+                    l.type==="SHARED_DEVICE" || l.type==="SHARED_IP"
+                        ? 1
+                        : 2
+            }))
+        );
+
+        const container=document.getElementById("network");
+
+        network=new vis.Network(
+            container,
+            {nodes:allNodes,edges:allEdges},
+            {
+                physics:{
+                    solver:"forceAtlas2Based",
+                    forceAtlas2Based:{
+                        gravitationalConstant:-80,
+                        centralGravity:0.01,
+                        springLength:160,
+                        springConstant:0.08
+                    },
+                    stabilization:{iterations:150}
+                },
+                interaction:{hover:true}
+            });
+
+        network.fit();
+    }
+
+
+
+    /* ================= SEARCH USERS ================= */
+    /* ================= SEARCH TRANSACTIONS ================= */
+    function searchUser() {
+
+        const userId =
+            document.getElementById("userSearchBox").value.trim();
+
+        if(!userId){
+            alert("Enter User ID");
+            return;
+        }
+
+        loadGraph(userId);
+    }
+    async function searchTransaction(){
+
+        const txId =
+            document.getElementById("txSearchBox").value.trim();
+
+        if(!txId){
+            alert("Enter Transaction ID");
+            return;
+        }
+
+        const depth =
+            document.getElementById("depthSelect").value;
+
+        const graph = await fetch(
+            `/api/relationships/transaction/${txId}?depth=${depth}`
+        ).then(r=>r.json());
+
+        renderGraph(graph);
+    }
+    document.getElementById("userSearchBox")
+        .addEventListener("keypress", e=>{
+            if(e.key==="Enter") searchUser();
+        });
+
+    document.getElementById("txSearchBox")
+        .addEventListener("keypress", e=>{
+            if(e.key==="Enter") searchTransaction();
+        });
+
+        function openUsers(){
+        window.location.href = "/users.html";
+    }
+
+        function openTransactions(){
+        window.location.href = "/transactions.html";
+    }
+    loadLists();
+</script>
+
+</body>
+</html>

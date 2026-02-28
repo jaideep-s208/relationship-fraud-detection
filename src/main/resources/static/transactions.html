@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>All Transactions</title>
+
+    <style>
+        body{
+            font-family:Segoe UI;
+            background:#f4f6f9;
+        }
+
+        .header{
+            text-align:center;
+            padding:20px;
+        }
+
+        button{
+            padding:8px 14px;
+            margin:5px;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+        }
+
+        .primary{background:#1976d2;color:white;}
+        .danger{background:#e53935;color:white;}
+
+        #search{
+            width:300px;
+            padding:10px;
+            margin:auto;
+            display:block;
+        }
+
+        #list{
+            width:60%;
+            margin:20px auto;
+        }
+
+        .card{
+            background:white;
+            padding:15px;
+            margin:12px 0;
+            border-radius:10px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.1);
+            cursor:pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>All Transactions</h2>
+    <button class="primary" onclick="showAll()">Show All</button>
+    <button class="danger" onclick="showHighValue()">Suspicious Transactions</button>
+</div>
+
+<input id="search" placeholder="Search transaction...">
+
+<div id="list"></div>
+
+<script>
+
+    let txs=[];
+
+    async function init(){
+        txs = await fetch("/transactions").then(r=>r.json());
+        render(txs);
+    }
+
+    function render(data){
+        const list=document.getElementById("list");
+        list.innerHTML="";
+
+        data.forEach(t=>{
+            const div=document.createElement("div");
+            div.className="card";
+
+            div.innerHTML=`
+            <b>ID:</b> ${t.id}<br>
+            <b>Amount:</b> ${t.amount}<br>
+            <b>Sender Id:</b> ${t.fromUserId}<br>
+            <b>Receiver Id:</b> ${t.toUserId}<br>
+            <b>Device Id:</b> ${t.deviceId}<br>
+            <b>IP:</b> ${t.ipAddress}
+
+        `;
+
+
+
+            list.appendChild(div);
+        });
+    }
+
+    function showAll(){ render(txs); }
+
+    function showHighValue(){
+        render(txs.filter(t=>t.amount>70000));
+    }
+
+    document.getElementById("search")
+        .addEventListener("input",e=>{
+            const val=e.target.value.toLowerCase();
+            render(txs.filter(t=>t.id.toLowerCase().includes(val)));
+        });
+
+    init();
+
+</script>
+
+</body>
+</html>
