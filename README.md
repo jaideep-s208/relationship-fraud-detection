@@ -43,6 +43,7 @@ docker run -d --name neo4j \
 neo4j:5.20
 ```
 Access Neo4j UI- http://localhost:7474
+
 6.	Build spring Boot App
 First Build JAR using command:
 ```bash
