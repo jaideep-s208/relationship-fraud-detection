@@ -7,11 +7,7 @@ It identifies:
 - Fraud relationship networks
 The system is fully Dockerized and runs using containerized Spring Boot and Neo4j.
 ## Architecture
-Browser
-   ↓
-Spring Boot REST API (Docker)
-   ↓
-Neo4j Graph Database (Docker)
+Browser->Spring Boot REST API (Docker)->Neo4j Graph Database (Docker)
 ## Tech Stack
 - Java 17
 - Spring Boot
@@ -45,7 +41,9 @@ neo4j:5.20
 Access Neo4j UI- http://localhost:7474
 
 6.	Build spring Boot App
+   
 First Build JAR using command:
+
 for Windows
 ```bash
 .\mvnw clean package -DskipTests
@@ -73,6 +71,7 @@ Access UI using- http://localhost:8080
 Now the System is almost ready to use. Just few Steps for data generation.
 
 9.	Generate and clean old Data
+    
 In a new Tab in the same browser where UI is already accessed, use mentioned http for different data generation and cleaning actions.
 http://localhost:8080/api/data/reset - to delete all data.
 http://localhost:8080/api/data/generate-demo - generate demo data which contains 
