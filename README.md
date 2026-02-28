@@ -29,11 +29,11 @@ Navigate to project folder using command-
 ```bash
 cd path/to/project
 ```
-5.	Create Docker Network
-    ```bash
-   docker network create relationship-network
-   ```
-6.	Start Neo4j container using command
+4.	Create Docker Network
+```bash
+docker network create relationship-network
+```
+5.	Start Neo4j container using command
 ```bash
 docker run -d --name neo4j \
 --network relationship-network \
@@ -43,13 +43,13 @@ docker run -d --name neo4j \
 neo4j:5.20
 ```
 Access Neo4j UI- http://localhost:7474
-7.	Build spring Boot App
+6.	Build spring Boot App
 First Build JAR using command:
 ```bash
 .\mvnw clean package -DskipTests
 ```
  for windows
- ```bash
+```bash
 ./mvnw clean package -DskipTests
 ```
 for MAC/Linux
@@ -57,7 +57,7 @@ Now Build Docker Image
 ```bash
 docker build -t relationshipsystem-app .
 ```
-8.	Start Application Container using command
+7.	Start Application Container using command
 ```bash
 docker run -d --name relationship-app \
 --network relationship-network \
