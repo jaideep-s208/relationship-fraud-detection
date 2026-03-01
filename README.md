@@ -84,15 +84,19 @@ Browser->Spring Boot REST API (Docker)->Neo4j Graph Database (Docker)
 2.	Install Docker https://www.docker.com/products/docker-desktop/
 Works for: Windows, Mac, Linux
 After Installation open Docker to make sure it's updated and working.
-3.	Open PowerShell/CMD for windows or Terminal for MAC
-Navigate to project folder using command-
-**3–4 spaces**```bash
-cd path/to/project
-```**3–4 spaces**
-5.	Start Container using command
-**3–4 spaces**```bash
-docker compose up -d
-```**3–4 spaces**
+3. Open PowerShell/CMD for Windows or Terminal for MAC  
+   Navigate to project folder using command:
+
+   ```bash
+   cd path/to/project
+   ```
+
+4. Start container using command:
+
+   ```bash
+   docker compose up -d
+   ```
+   
 - Access Neo4j UI- http://localhost:7474
    - UserId-Neo4j
    - Password-password
