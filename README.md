@@ -16,64 +16,124 @@ Browser->Spring Boot REST API (Docker)->Neo4j Graph Database (Docker)
 - Docker
 - Maven
 - Git
+
+## Features
+### Graph-Based Relationship Visualization
+
+- Interactive Neo4j graph visualization
+
+- Displays:
+
+   -Users
+
+   -Transactions
+
+   - Relationships between users and transactions
+
+- Detects shared:
+
+   - Devices
+
+   - IP addresses
+
+   - Suspicious transaction clusters
+
+### Shortest Path Detection
+
+- Find the shortest relationship path between two users
+
+- Useful for:
+
+   - Fraud ring detection
+
+   - Relationship tracing
+
+   - Network investigation
+
+### Advanced Filtering
+
+- Filter users by:
+
+   - Minimum transaction count
+
+- Filter transactions by:
+
+   - Minimum transaction amount
+
+- Search specific:
+
+   - User
+
+   - Transaction
+
+### Export Graph Data
+
+- Export current graph as JSON
+
+- Useful for:
+
+   - Reporting
+
+   - Debugging
+
+   - External analytics tools
+
+### Depth Control
+
+- Control graph expansion depth
+
+- Prevents graph overload
+
+- Improves visualization performance
+
+### Live Graph Loading
+
+- Load full graph dynamically
+
+- Refresh data without restarting backend
+
+## Controls
+
+| Control                   | Description                                              |
+| ------------------------- | -------------------------------------------------------- |
+| **User 1 / User 2 Input** | Select two users to compute shortest path                |
+| **Shortest Path**         | Calculates and visualizes the shortest relationship path |
+| **Export JSON**           | Downloads current graph data as JSON                     |
+| **Load Graph**            | Loads graph based on selected filters                    |
+| **Depth Selector**        | Controls how many relationship levels to expand          |
+| **Min User Transactions** | Filters users by minimum number of transactions          |
+| **Filter Users**          | Applies user transaction filter                          |
+| **Min Amount**            | Filters transactions above specified amount              |
+| **Filter Transactions**   | Applies transaction amount filter                        |
+| **Show All Users**        | Displays all users in the graph                          |
+| **Show All Transactions** | Displays all transactions                                |
+| **Search User**           | Finds and highlights specific user node                  |
+| **Search Transaction**    | Finds and highlights specific transaction node           |
+  
 ## How to Run the Project
 1.	Download zip file of the project and extract.
 2.	Install Docker https://www.docker.com/products/docker-desktop/
 Works for: Windows, Mac, Linux
-3.	Open PowerShell/CMD for windows or Terminal for MAC
+After Installation open Docker to make sure it's updated and working.
+4.	Open PowerShell/CMD for windows or Terminal for MAC
 Navigate to project folder using command-
 ```bash
 cd path/to/project
 ```
-4.	Create Docker Network
+4.	Start Container using command
 ```bash
-docker network create relationship-network
-```
-5.	Start Neo4j container using command
-```bash
-docker run -d --name neo4j \
---network relationship-network \
--p 7474:7474 \
--p 7687:7687 \
--e NEO4J_AUTH=neo4j/password \
-neo4j:5.20
+docker compose up -d
 ```
 Access Neo4j UI- http://localhost:7474
 
 - UserId-Neo4j
 - Password-password
 
-6.	Build spring Boot App
-   
-First Build JAR using command:
-
-for Windows
-```bash
-.\mvnw clean package -DskipTests
-```
-for MAC/Linux
-```bash
-./mvnw clean package -DskipTests
-```
-Now Build Docker Image
-```bash
-docker build -t relationshipsystem-app .
-```
-7.	Start Application Container using command
-```bash
-docker run -d --name relationship-app \
---network relationship-network \
--p 8080:8080 \
--e SPRING_NEO4J_URI=bolt://neo4j:7687 \
--e SPRING_NEO4J_AUTHENTICATION_USERNAME=neo4j \
--e SPRING_NEO4J_AUTHENTICATION_PASSWORD=password \
-relationshipsystem-app
-```
 Access UI using- http://localhost:8080
 
 Now the System is almost ready to use. Just few Steps for data generation.
 
-9.	Generate and clean old Data
+5.	Generate and clean old Data
     
 In a new Tab in the same browser where UI is already accessed, use mentioned http for different data generation and cleaning actions.
 
@@ -91,5 +151,8 @@ http://localhost:8080/api/data/generate-users - to generate 200 users
 http://localhost:8080/api/data/generate-large - to generate 100,000 transactions 
 
 Note- Use generate-users and generate-large should be used together to generate bigger data set for visualization.
+
+
+
 
 
