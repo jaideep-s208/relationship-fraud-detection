@@ -21,10 +21,8 @@ Browser->Spring Boot REST API (Docker)->Neo4j Graph Database (Docker)
 ### Graph-Based Relationship Visualization
 
 - Interactive Neo4j graph visualization
-
 - Displays:
-
-   -Users
+   - Users
 
    -Transactions
 
