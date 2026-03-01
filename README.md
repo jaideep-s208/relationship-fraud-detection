@@ -104,16 +104,16 @@ Navigate to project folder using command-
    cd path/to/project
    ```
 4.	Start Container using command
-```bash
-docker compose up -d
-```
+   ```bash
+   docker compose up -d
+   ```
 - Access Neo4j UI- http://localhost:7474
    - UserId-Neo4j
    - Password-password
 
 - Access UI using- http://localhost:8080
 
-- Now the System is almost ready to use. Just few Steps for data generation.
+Now the System is almost ready to use. Just few Steps for data generation.
 
 5.	Generate and clean old Data
     
