@@ -103,27 +103,27 @@ After Installation open Docker to make sure it's updated and working.
 
 - Access UI using- http://localhost:8080
 
-Now the System is almost ready to use. Just few Steps for data generation.
+  Now the System is almost ready to use. Just few Steps for data generation.
 
 5.	Generate and clean old Data
     
-In a new Tab in the same browser where UI is already accessed, use mentioned http for different data generation and cleaning actions.
+   In a new Tab in the same browser where UI is already accessed, use mentioned http for different data generation and cleaning actions.
 
-http://localhost:8080/api/data/reset - to delete all data.
+   http://localhost:8080/api/data/reset - to delete all data.
 
-http://localhost:8080/api/data/generate-demo - generate demo data which contains 
+   http://localhost:8080/api/data/generate-demo - generate demo data which contains 
 
-- At least 5-10 Users with shared attributes. 
-- At least 10-15 Transactions with a mix of direct and indirect links. 
-- 3-5 examples of Shared Attributes (e.g., phone, email) that cause user-to user links. 
-- 2-3 Transaction-to-Transaction links based on IP, Device ID, or similar identifiers
-Again come on http://localhost:8080 to access UI and click on generate graph to create graph and access different fetures on UI.
+   - At least 5-10 Users with shared attributes. 
+   - At least 10-15 Transactions with a mix of direct and indirect links. 
+   - 3-5 examples of Shared Attributes (e.g., phone, email) that cause user-to user links. 
+   - 2-3 Transaction-to-Transaction links based on IP, Device ID, or similar identifiers
+   Again come on http://localhost:8080 to access UI and click on generate graph to create graph and access different fetures on UI.
   
-http://localhost:8080/api/data/generate-users - to generate 200 users
+   http://localhost:8080/api/data/generate-users - to generate 200 users
 
-http://localhost:8080/api/data/generate-large - to generate 100,000 transactions 
+   http://localhost:8080/api/data/generate-large - to generate 100,000 transactions 
 
-Note- Use generate-users and generate-large should be used together to generate bigger data set for visualization.
+   Note- Use generate-users and generate-large should be used together to generate bigger data set for visualization.
 
 
 
