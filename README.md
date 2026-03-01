@@ -23,17 +23,12 @@ Browser->Spring Boot REST API (Docker)->Neo4j Graph Database (Docker)
 - Interactive Neo4j graph visualization
 - Displays:
    - Users
-
-   -Transactions
-
+   - Transactions
    - Relationships between users and transactions
 
 - Detects shared:
-
    - Devices
-
    - IP addresses
-
    - Suspicious transaction clusters
 
 ### Shortest Path Detection
@@ -41,27 +36,20 @@ Browser->Spring Boot REST API (Docker)->Neo4j Graph Database (Docker)
 - Find the shortest relationship path between two users
 
 - Useful for:
-
    - Fraud ring detection
-
    - Relationship tracing
-
    - Network investigation
 
 ### Advanced Filtering
 
 - Filter users by:
-
    - Minimum transaction count
 
 - Filter transactions by:
-
    - Minimum transaction amount
 
 - Search specific:
-
    - User
-
    - Transaction
 
 ### Export Graph Data
@@ -69,11 +57,8 @@ Browser->Spring Boot REST API (Docker)->Neo4j Graph Database (Docker)
 - Export current graph as JSON
 
 - Useful for:
-
    - Reporting
-
    - Debugging
-
    - External analytics tools
 
 ### Depth Control
