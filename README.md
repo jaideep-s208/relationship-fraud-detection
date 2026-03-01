@@ -81,12 +81,11 @@ Browser->Spring Boot REST API (Docker)->Neo4j Graph Database (Docker)
   
 ## How to Run the Project
 1.	Download zip file of the project and extract.
-2.	Install Docker https://www.docker.com/products/docker-desktop/
+2. Install Docker https://www.docker.com/products/docker-desktop/
 
    Works for: Windows, Mac, Linux
 
-   After Installation open Docker to make sure it's updated and working.
-
+   After installation, open Docker to make sure it's updated and working.
 3. Open PowerShell/CMD for Windows or Terminal for MAC  
    Navigate to project folder using command:
 
