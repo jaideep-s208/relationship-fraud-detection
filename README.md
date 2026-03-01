@@ -19,60 +19,46 @@ Browser->Spring Boot REST API (Docker)->Neo4j Graph Database (Docker)
 
 ## Features
 ### Graph-Based Relationship Visualization
-
 - Interactive Neo4j graph visualization
 - Displays:
    - Users
    - Transactions
    - Relationships between users and transactions
-
 - Detects shared:
    - Devices
    - IP addresses
    - Suspicious transaction clusters
 
 ### Shortest Path Detection
-
 - Find the shortest relationship path between two users
-
 - Useful for:
    - Fraud ring detection
    - Relationship tracing
    - Network investigation
 
 ### Advanced Filtering
-
 - Filter users by:
    - Minimum transaction count
-
 - Filter transactions by:
    - Minimum transaction amount
-
 - Search specific:
    - User
    - Transaction
 
 ### Export Graph Data
-
 - Export current graph as JSON
-
 - Useful for:
    - Reporting
    - Debugging
    - External analytics tools
 
 ### Depth Control
-
 - Control graph expansion depth
-
 - Prevents graph overload
-
 - Improves visualization performance
 
 ### Live Graph Loading
-
 - Load full graph dynamically
-
 - Refresh data without restarting backend
 
 ## Controls
@@ -100,13 +86,13 @@ Works for: Windows, Mac, Linux
 After Installation open Docker to make sure it's updated and working.
 3.	Open PowerShell/CMD for windows or Terminal for MAC
 Navigate to project folder using command-
-   ```bash
-   cd path/to/project
-   ```
-4.	Start Container using command
-   ```bash
-   docker compose up -d
-   ```
+**3–4 spaces**```bash
+cd path/to/project
+```**3–4 spaces**
+5.	Start Container using command
+**3–4 spaces**```bash
+docker compose up -d
+```**3–4 spaces**
 - Access Neo4j UI- http://localhost:7474
    - UserId-Neo4j
    - Password-password
@@ -127,6 +113,7 @@ http://localhost:8080/api/data/generate-demo - generate demo data which contains
 - At least 10-15 Transactions with a mix of direct and indirect links. 
 - 3-5 examples of Shared Attributes (e.g., phone, email) that cause user-to user links. 
 - 2-3 Transaction-to-Transaction links based on IP, Device ID, or similar identifiers
+Again come on http://localhost:8080 to access UI and click on generate graph to create graph and access different fetures on UI.
   
 http://localhost:8080/api/data/generate-users - to generate 200 users
 
