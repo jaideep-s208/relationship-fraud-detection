@@ -12,7 +12,7 @@ Browser->Spring Boot REST API (Docker)->Neo4j Graph Database (Docker)
 - Java 17
 - Spring Boot
 - Spring Data Neo4j
-- Neo4j 5.x
+- Neo4j Graph Database
 - Docker
 - Maven
 - Git
